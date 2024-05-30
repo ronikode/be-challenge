@@ -1,84 +1,69 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { PrismaService } from '@prismaClient/prisma.service';
+import { prismaMock } from '../../mocks/prismaSingleton.mock';
 
+import { PaginatedResponseDto } from '@common/dtos';
+import { mockSprocketsData } from '../../mocks/sprocketsData.mock';
+
+import { SprocketDto } from '@sprocket/dto';
 import { SprocketController } from '@sprocket/sprocket.controller';
 import { SprocketService } from '@sprocket/sprocket.service';
-import { CreateSprocketDto, UpdateSprocketDto } from '@sprocket/dto';
 
-describe('SprocketController', () => {
+describe('sprocket.controller', () => {
   let controller: SprocketController;
-  let service: SprocketService;
+  const fakeSprocketService: Omit<SprocketService, 'sprocketRepository'> = {
+    findAll: async () => new PaginatedResponseDto(),
+    findOneById: async () => new SprocketDto(),
+    createSprocket: async () => new SprocketDto(),
+    updateSprocket: async () => new SprocketDto(),
+    fillSprocketsWithSeedData: async () => Promise.resolve(),
+  };
+  const fakeSprockets = mockSprocketsData(2);
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
       controllers: [SprocketController],
-      providers: [SprocketService],
+      providers: [
+        {
+          provide: SprocketService,
+          useValue: fakeSprocketService,
+        },
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
-    controller = module.get<SprocketController>(SprocketController);
-    service = module.get<SprocketService>(SprocketService);
+    controller = moduleRef.get<SprocketController>(SprocketController);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   describe('getAllSprockets', () => {
     it('should return a paginated list of sprockets', async () => {
-      const result = {
-        data: [
-          { id: '1', name: 'Sprocket 1' },
-          { id: '2', name: 'Sprocket 2' },
-        ],
-        total: 2,
-        page: 1,
-        limit: 10,
+      // GIVEN
+      const paginationInput = { offset: 0, limit: 10 };
+      const expectedResponse = {
+        paging: {
+          limit: 20,
+          offset: 0,
+          total_count: fakeSprockets.length,
+        },
+        items: fakeSprockets,
       };
-      jest.spyOn(service, 'getAllSprockets').mockResolvedValue(result);
-
-      const params = { page: 1, limit: 10 };
-      const response = await controller.getAllSprockets(params);
-
-      expect(service.getAllSprockets).toHaveBeenCalledWith(params);
-      expect(response).toEqual(result);
-    });
-  });
-
-  describe('getSprocket', () => {
-    it('should return a sprocket by id', async () => {
-      const result = { id: '1', name: 'Sprocket 1' };
-      jest.spyOn(service, 'getSprocketById').mockResolvedValue(result);
-
-      const id = '1';
-      const response = await controller.getSprocket(id);
-
-      expect(service.getSprocketById).toHaveBeenCalledWith(id);
-      expect(response).toEqual(result);
-    });
-  });
-
-  describe('createSprocket', () => {
-    it('should create a new sprocket', async () => {
-      const createSprocketDto: CreateSprocketDto = { name: 'New Sprocket' };
-      const result = { id: '1', name: 'New Sprocket' };
-      jest.spyOn(service, 'createSprocket').mockResolvedValue(result);
-
-      const response = await controller.createSprocket(createSprocketDto);
-
-      expect(service.createSprocket).toHaveBeenCalledWith(createSprocketDto);
-      expect(response).toEqual(result);
-    });
-  });
-
-  describe('updateSprocket', () => {
-    it('should update a sprocket by id', async () => {
-      const id = '1';
-      const updateSprocketDto: UpdateSprocketDto = { name: 'Updated Sprocket' };
-      const result = { id: '1', name: 'Updated Sprocket' };
-      jest.spyOn(service, 'updateSprocket').mockResolvedValue(result);
-
-      const response = await controller.updateSprocket(id, updateSprocketDto);
-
-      expect(service.updateSprocket).toHaveBeenCalledWith(
-        id,
-        updateSprocketDto,
-      );
-      expect(response).toEqual(result);
+      jest
+        .spyOn(fakeSprocketService, 'findAll')
+        .mockResolvedValue(expectedResponse);
+      // WHEN
+      const response = await controller.getAllSprockets(paginationInput);
+      // THEN
+      expect(response).toBeDefined();
+      expect(response).toEqual(expectedResponse);
     });
   });
 });

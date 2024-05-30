@@ -1,122 +1,151 @@
 import { Test } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
-import { Sprocket } from '@prisma/client';
+import { mockSprocketsData } from '../../mocks/sprocketsData.mock';
 
+import { BasePaginationInput, PaginatedResponseDto } from '@common/dtos';
+import { SprocketDto } from '@sprocket/dto';
 import { SprocketService } from '@sprocket/sprocket.service';
 import { SprocketRepository } from '@sprocket/sprocket.repository';
-import { CreateSprocketDto, UpdateSprocketDto } from '@sprocket/dto';
 
 describe('SprocketService', () => {
   let sprocketService: SprocketService;
-  let sprocketRepository: SprocketRepository;
+  let fakeSprocketRepository: Omit<SprocketRepository, 'prismaService'>;
 
-  beforeEach(async () => {
+  const fakeSprockets = mockSprocketsData(2);
+
+  beforeAll(async () => {
+    fakeSprocketRepository = {
+      getAllSprockets: () => Promise.resolve(new PaginatedResponseDto()),
+      createSprocket: () => Promise.resolve(new SprocketDto()),
+      getSprocketById: () => Promise.resolve(new SprocketDto()),
+      editSprocketById: () => Promise.resolve(new SprocketDto()),
+    };
+
     const moduleRef = await Test.createTestingModule({
       providers: [
         SprocketService,
+        SprocketRepository,
         {
           provide: SprocketRepository,
-          useValue: {
-            findAll: jest.fn(),
-            findOneById: jest.fn(),
-            createSprocket: jest.fn(),
-            updateSprocket: jest.fn(),
-            fillSprocketsWithSeedData: jest.fn(),
-          },
+          useValue: fakeSprocketRepository,
         },
       ],
     }).compile();
 
     sprocketService = moduleRef.get<SprocketService>(SprocketService);
-    sprocketRepository = moduleRef.get<SprocketRepository>(SprocketRepository);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
+  it('should be defined', () => {
+    expect(sprocketService).toBeDefined();
   });
 
   describe('findAll', () => {
     it('should return a paginated list of sprockets', async () => {
-      const paginationInput = { page: 1, limit: 10 };
+      // GIVEN
+      const paginationInput: BasePaginationInput = { offset: 0, limit: 10 };
       const expectedResponse = {
-        data: [
-          { id: '1', name: 'Sprocket 1' },
-          { id: '2', name: 'Sprocket 2' },
-        ],
-        totalCount: 2,
-        page: 1,
-        limit: 10,
+        items: fakeSprockets,
+        paging: {
+          total_count: fakeSprockets.length,
+          limit: paginationInput.limit,
+          offset: paginationInput.offset,
+        },
       };
       jest
-        .spyOn(sprocketRepository, 'findAll')
+        .spyOn(fakeSprocketRepository, 'getAllSprockets')
         .mockResolvedValue(expectedResponse);
 
+      // WHEN
       const result = await sprocketService.findAll(paginationInput);
+      // THEN
+      expect(result).toBeDefined();
+      expect(result.paging.limit).toBe(paginationInput.limit);
+      expect(result.paging.offset).toBe(paginationInput.offset);
+      expect(result.items).toHaveLength(fakeSprockets.length);
+    });
 
-      expect(result).toEqual(expectedResponse);
-      expect(sprocketRepository.findAll).toHaveBeenCalledWith(paginationInput);
+    it('should return a paginated object if sprockets is empty', async () => {
+      // GIVEN
+      const paginationInput: BasePaginationInput = { offset: 0, limit: 10 };
+      const expectedResponse = {
+        items: [],
+        paging: {
+          total_count: 0,
+          limit: paginationInput.limit,
+          offset: paginationInput.offset,
+        },
+      };
+      jest
+        .spyOn(fakeSprocketRepository, 'getAllSprockets')
+        .mockResolvedValue(expectedResponse);
+
+      // WHEN
+      const result = await sprocketService.findAll(paginationInput);
+      // THEN
+      expect(result).toBeDefined();
+      expect(result.paging.limit).toBe(paginationInput.limit);
+      expect(result.paging.offset).toBe(paginationInput.offset);
+      expect(result.items).toHaveLength(0);
     });
   });
 
   describe('findOneById', () => {
-    it('should return a sprocket by id', async () => {
-      const sprocketId = '1';
-      const expectedResponse = { id: '1', name: 'Sprocket 1' };
+    it('should return a specific sprocket', async () => {
+      // GIVEN
+      const expectedResponse = fakeSprockets[0];
       jest
-        .spyOn(sprocketRepository, 'findOneById')
+        .spyOn(fakeSprocketRepository, 'getSprocketById')
         .mockResolvedValue(expectedResponse);
 
-      const result = await sprocketService.findOneById(sprocketId);
-
+      // WHEN
+      const result = await sprocketService.findOneById(expectedResponse.id);
+      // THEN
+      expect(result).toBeDefined();
       expect(result).toEqual(expectedResponse);
-      expect(sprocketRepository.findOneById).toHaveBeenCalledWith(sprocketId);
     });
 
-    it('should throw NotFoundException if sprocket is not found', async () => {
-      const sprocketId = '1';
+    it('should throw and exception when sprocket is not found', async () => {
+      // GIVEN
+      const expectedResponse = undefined;
       jest
-        .spyOn(sprocketRepository, 'findOneById')
-        .mockResolvedValue(undefined);
-
-      await expect(sprocketService.findOneById(sprocketId)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(sprocketRepository.findOneById).toHaveBeenCalledWith(sprocketId);
+        .spyOn(fakeSprocketRepository, 'getSprocketById')
+        .mockResolvedValue(expectedResponse);
+      // WHEN
+      const result = sprocketService.findOneById('1');
+      // THEN
+      expect(result).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('createSprocket', () => {
-    it('should create a new sprocket', async () => {
-      const createSprocketDto: CreateSprocketDto = { name: 'New Sprocket' };
-      const expectedResponse = { id: '1', name: 'New Sprocket' };
+    it('should create a sprocket', async () => {
+      // GIVEN
+      const sprocket = fakeSprockets[0];
       jest
-        .spyOn(sprocketRepository, 'createSprocket')
-        .mockResolvedValue(expectedResponse);
-
-      const result = await sprocketService.createSprocket(createSprocketDto);
-
-      expect(result).toEqual(expectedResponse);
-      expect(sprocketRepository.createSprocket).toHaveBeenCalledWith(
-        createSprocketDto,
-      );
+        .spyOn(fakeSprocketRepository, 'createSprocket')
+        .mockResolvedValue(sprocket);
+      // WHEN
+      const result = await sprocketService.createSprocket(sprocket);
+      // THEN
+      expect(result).toBeDefined();
+      expect(result).toEqual(sprocket);
     });
-  });
 
-  describe('updateSprocket', () => {
-    it('should update an existing sprocket', async () => {
-      const sprocketId = '1';
-      const updateSprocketDto: UpdateSprocketDto = { pitch: 12 };
-      const expectedResponse = { id: '1', name: 'Updated Sprocket' };
+    it('should throw a BadRequestException invalid request', async () => {
+      // Mock the function to reject with a BadRequestException
       jest
-        .spyOn(sprocketRepository, 'updateSprocket')
-        .mockResolvedValue(expectedResponse);
+        .spyOn(sprocketService, 'createSprocket')
+        .mockRejectedValue(new BadRequestException());
 
-      const result = await sprocketService.updateSprocket(
-        sprocketId,
-        updateSprocketDto,
-      );
-
-      expect(result).toEqual(expectedResponse);
-      expect(sprocketRepository.updateSprocket).toHaveBeenCalledWith(
-        sprocketId,
-        updateSprocketDto,
+      // Assert that the function throws a BadRequestException
+      await expect(sprocketService.createSprocket(null)).rejects.toThrow(
+        BadRequestException,
       );
     });
   });

@@ -13,7 +13,6 @@ export class SprocketService {
     params: BasePaginationInput,
   ): Promise<PaginatedResponseDto<SprocketDto>> {
     const sprockets = await this.sprocketRepository.getAllSprockets(params);
-    console.log(sprockets);
     return sprockets;
   }
 
