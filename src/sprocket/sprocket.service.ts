@@ -1,62 +1,50 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { CreateSprocketDto, UpdateSprocketDto } from './dto';
-import { Sprocket } from './interfaces/sprocket.interface';
+import { BasePaginationInput, PaginatedResponseDto } from '@common/dtos';
+import { CreateSprocketDto, SprocketDto, UpdateSprocketDto } from './dto';
+
+import { Sprocket } from './entities/sprocket.interface';
 import { SprocketRepository } from './sprocket.repository';
 
 @Injectable()
 export class SprocketService {
-  private sprockets: Sprocket[] = [];
-
   constructor(private readonly sprocketRepository: SprocketRepository) {}
 
-  findAll() {
-    return this.sprocketRepository.getAllSprockets();
+  async findAll(
+    params: BasePaginationInput,
+  ): Promise<PaginatedResponseDto<SprocketDto>> {
+    const sprockets = await this.sprocketRepository.getAllSprockets(params);
+    console.log(sprockets);
+    return sprockets;
   }
 
-  findOneById(id: string) {
-    const sprocket = this.sprocketRepository.getSprocketById(id);
+  async findOneById(id: string): Promise<SprocketDto> | undefined {
+    const sprocket = await this.sprocketRepository.getSprocketById(id);
     if (!sprocket) {
       throw new NotFoundException(`Sprocket with id '${id}' not found`);
     }
     return sprocket;
   }
 
-  createSprocket(createSprocketDto: CreateSprocketDto) {
-    // const newSprocket: Sprocket = {
-    //   id: uuid(),
-    //   ...createSprocketDto,
-    // };
-    // this.sprockets.push(newSprocket);
-
-    return this.sprocketRepository.createSprocket(createSprocketDto);
+  async createSprocket(
+    createSprocketDto: CreateSprocketDto,
+  ): Promise<SprocketDto> {
+    return await this.sprocketRepository.createSprocket(createSprocketDto);
   }
 
-  updateSprocket(id: string, updateSprocketDto: UpdateSprocketDto) {
-    let sprocketDB = this.findOneById(id);
-
-    if (updateSprocketDto.id && updateSprocketDto.id !== id)
-      throw new BadRequestException(
-        `Sprocket with id '${id}' is not valid inside body`,
-      );
-
-    this.sprockets = this.sprockets.map((sprocket) => {
-      if (sprocket.id === id) {
-        sprocketDB = {
-          ...sprocketDB,
-          ...updateSprocketDto,
-        };
-        return sprocket;
-      }
-    });
-    return sprocketDB;
+  async updateSprocket(
+    id: string,
+    updateSprocketDto: UpdateSprocketDto,
+  ): Promise<SprocketDto> {
+    this.findOneById(id);
+    return await this.sprocketRepository.editSprocketById(
+      id,
+      updateSprocketDto,
+    );
   }
 
   fillSprocketsWithSeedData(sprockets: Sprocket[]) {
-    this.sprockets = sprockets;
+    console.log('fillSprocketsWithSeedData');
+    console.log(sprockets);
   }
 }

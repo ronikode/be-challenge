@@ -1,6 +1,13 @@
+import { OmitType } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 
-export class CreateSprocketDto {
+import { SprocketDto } from './sprocket.dto';
+
+export class CreateSprocketDto extends OmitType(SprocketDto, [
+  'id',
+  'createdAt',
+  'updatedAt',
+]) {
   @IsNumber()
   readonly teeth: number;
 

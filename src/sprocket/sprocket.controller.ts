@@ -2,16 +2,25 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { SprocketService } from './sprocket.service';
-import { CreateSprocketDto } from './dto/create-sprocket.dto';
-import { UpdateSprocketDto } from './dto/update-sprocket.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { BasePaginationInput } from '@common/dtos/basePaginationInput.dto';
+import { PaginatedResponseDto } from '@common/dtos/paginatedResponse.dto';
+
+import { SprocketDto, CreateSprocketDto, UpdateSprocketDto } from './dto';
 
 @Controller('sprockets')
 @ApiTags('sprockets')
@@ -19,11 +28,30 @@ export class SprocketController {
   constructor(private readonly sprocketService: SprocketService) {}
 
   @Get()
-  getAllSprockets() {
-    return this.sprocketService.findAll();
+  @ApiOperation({ summary: 'Get insurance profiles for specific patient' })
+  @ApiOkResponse({
+    status: HttpStatus.OK,
+    description: 'OK',
+    type: PaginatedResponseDto<SprocketDto>,
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal Server Error',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request Error',
+  })
+  getAllSprockets(@Query() params: BasePaginationInput) {
+    return this.sprocketService.findAll(params);
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    status: HttpStatus.OK,
+    description: 'OK',
+    type: SprocketDto,
+  })
   getSprocket(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.sprocketService.findOneById(id);
   }
@@ -33,9 +61,27 @@ export class SprocketController {
     return this.sprocketService.createSprocket(createSprocketDto);
   }
 
-  @Patch()
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update sprocket by identifier' })
+  @ApiOkResponse({
+    status: HttpStatus.OK,
+    description: 'OK',
+    type: SprocketDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Not found with the identifier',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal Server Error',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request Error',
+  })
   updateSprocket(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateSprocketDto: UpdateSprocketDto,
   ) {
     return this.sprocketService.updateSprocket(id, updateSprocketDto);

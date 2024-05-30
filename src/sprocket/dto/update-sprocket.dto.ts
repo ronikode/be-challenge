@@ -1,24 +1,5 @@
-import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
 
-export class UpdateSprocketDto {
-  @IsString()
-  @IsUUID()
-  @IsOptional()
-  readonly id?: string;
+import { CreateSprocketDto } from './create-sprocket.dto';
 
-  @IsNumber()
-  @IsOptional()
-  readonly teeth?: number;
-
-  @IsNumber()
-  @IsOptional()
-  readonly pitchDiameter?: number;
-
-  @IsNumber()
-  @IsOptional()
-  readonly outsideDiameter?: number;
-
-  @IsNumber()
-  @IsOptional()
-  readonly pitch?: number;
-}
+export class UpdateSprocketDto extends PartialType(CreateSprocketDto) {}

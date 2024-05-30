@@ -20,9 +20,11 @@
     "types": ["jest"],
     "paths": {
       "@utils/*": ["src/utils/*"],
+      "@common/*": ["src/common/*"],
       "@config/*": ["src/config/*"],
       "@seeds/*": ["src/prisma/seeds/*"],
       "@prismaClient/*": ["src/modules/prisma/*"],
+      "@sprocket/*": ["src/sprocket/*"],
       "@unitTests/*": ["tests/unit/*"]
     }
   },
