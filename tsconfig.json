@@ -24,7 +24,7 @@
       "@config/*": ["src/config/*"],
       "@seeds/*": ["src/prisma/seeds/*"],
       "@prismaClient/*": ["src/modules/prisma/*"],
-      "@sprocket/*": ["src/sprocket/*"],
+      "@sprocket/*": ["src/modules/sprocket/*"],
       "@unitTests/*": ["tests/unit/*"]
     }
   },

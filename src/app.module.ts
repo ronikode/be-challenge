@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { SprocketModule } from './sprocket/sprocket.module';
-import { SeedModule } from './modules/seed/seed.module';
+import { SprocketModule } from './modules/sprocket/sprocket.module';
 
 // Modules
 import { PrismaModule } from './modules/prisma/prisma.module';
 
 @Module({
-  imports: [SprocketModule, SeedModule, PrismaModule],
+  imports: [SprocketModule, PrismaModule],
   controllers: [],
   providers: [],
   exports: [],

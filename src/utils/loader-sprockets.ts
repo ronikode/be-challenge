@@ -25,8 +25,7 @@ function readSprocketsJsonFile(filePath: string): Sprocket[] {
   return convertData;
 }
 
-const FILE_SEED_SPROCKET_PATH =
-  'src/modules/seed/data/seed_sprocket_types.json';
+const FILE_SEED_SPROCKETS_PATH = 'prisma/seeds/data/seed_sprocket_types.json';
 export const sprocketsData: Sprocket[] = readSprocketsJsonFile(
-  FILE_SEED_SPROCKET_PATH,
+  FILE_SEED_SPROCKETS_PATH,
 );
