@@ -16,10 +16,10 @@ describe('SprocketService', () => {
 
   beforeAll(async () => {
     fakeSprocketRepository = {
-      getAllSprockets: () => Promise.resolve(new PaginatedResponseDto()),
-      createSprocket: () => Promise.resolve(new SprocketDto()),
-      getSprocketById: () => Promise.resolve(new SprocketDto()),
-      editSprocketById: () => Promise.resolve(new SprocketDto()),
+      findAll: () => Promise.resolve(new PaginatedResponseDto()),
+      create: () => Promise.resolve(new SprocketDto()),
+      findOne: () => Promise.resolve(new SprocketDto()),
+      update: () => Promise.resolve(new SprocketDto()),
     };
 
     const moduleRef = await Test.createTestingModule({
@@ -58,11 +58,11 @@ describe('SprocketService', () => {
         },
       };
       jest
-        .spyOn(fakeSprocketRepository, 'getAllSprockets')
+        .spyOn(fakeSprocketRepository, 'findAll')
         .mockResolvedValue(expectedResponse);
 
       // WHEN
-      const result = await sprocketService.findAll(paginationInput);
+      const result = await sprocketService.getAllSprockets(paginationInput);
       // THEN
       expect(result).toBeDefined();
       expect(result.paging.limit).toBe(paginationInput.limit);
@@ -82,11 +82,11 @@ describe('SprocketService', () => {
         },
       };
       jest
-        .spyOn(fakeSprocketRepository, 'getAllSprockets')
+        .spyOn(fakeSprocketRepository, 'findAll')
         .mockResolvedValue(expectedResponse);
 
       // WHEN
-      const result = await sprocketService.findAll(paginationInput);
+      const result = await sprocketService.getAllSprockets(paginationInput);
       // THEN
       expect(result).toBeDefined();
       expect(result.paging.limit).toBe(paginationInput.limit);
@@ -100,7 +100,7 @@ describe('SprocketService', () => {
       // GIVEN
       const expectedResponse = fakeSprockets[0];
       jest
-        .spyOn(fakeSprocketRepository, 'getSprocketById')
+        .spyOn(fakeSprocketRepository, 'findOne')
         .mockResolvedValue(expectedResponse);
 
       // WHEN
@@ -114,7 +114,7 @@ describe('SprocketService', () => {
       // GIVEN
       const expectedResponse = undefined;
       jest
-        .spyOn(fakeSprocketRepository, 'getSprocketById')
+        .spyOn(fakeSprocketRepository, 'findOne')
         .mockResolvedValue(expectedResponse);
       // WHEN
       const result = sprocketService.findOneById('1');
@@ -127,9 +127,7 @@ describe('SprocketService', () => {
     it('should create a sprocket', async () => {
       // GIVEN
       const sprocket = fakeSprockets[0];
-      jest
-        .spyOn(fakeSprocketRepository, 'createSprocket')
-        .mockResolvedValue(sprocket);
+      jest.spyOn(fakeSprocketRepository, 'create').mockResolvedValue(sprocket);
       // WHEN
       const result = await sprocketService.createSprocket(sprocket);
       // THEN

@@ -9,15 +9,15 @@ import { SprocketRepository } from './sprocket.repository';
 export class SprocketService {
   constructor(private readonly sprocketRepository: SprocketRepository) {}
 
-  async findAll(
+  async getAllSprockets(
     params: BasePaginationInput,
   ): Promise<PaginatedResponseDto<SprocketDto>> {
-    const sprockets = await this.sprocketRepository.getAllSprockets(params);
+    const sprockets = await this.sprocketRepository.findAll(params);
     return sprockets;
   }
 
   async findOneById(id: string): Promise<SprocketDto> | undefined {
-    const sprocket = await this.sprocketRepository.getSprocketById(id);
+    const sprocket = await this.sprocketRepository.findOne(id);
     if (!sprocket) {
       throw new NotFoundException(`Sprocket with id '${id}' not found`);
     }
@@ -27,7 +27,7 @@ export class SprocketService {
   async createSprocket(
     createSprocketDto: CreateSprocketDto,
   ): Promise<SprocketDto> {
-    return await this.sprocketRepository.createSprocket(createSprocketDto);
+    return await this.sprocketRepository.create(createSprocketDto);
   }
 
   async updateSprocket(
@@ -35,10 +35,7 @@ export class SprocketService {
     updateSprocketDto: UpdateSprocketDto,
   ): Promise<SprocketDto> {
     this.findOneById(id);
-    return await this.sprocketRepository.editSprocketById(
-      id,
-      updateSprocketDto,
-    );
+    return await this.sprocketRepository.update(id, updateSprocketDto);
   }
 
   fillSprocketsWithSeedData(sprockets: any[]) {

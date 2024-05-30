@@ -11,13 +11,13 @@ import { UpdateSprocketDto } from './dto/update-sprocket.dto';
 export class SprocketRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createSprocket(createSprocketDto: CreateSprocketDto) {
+  async create(createSprocketDto: CreateSprocketDto) {
     return this.prismaService.sprocket.create({
       data: createSprocketDto as CreateSprocketDto,
     });
   }
 
-  async getAllSprockets(
+  async findAll(
     params: BasePaginationInput,
   ): Promise<PaginatedResponseDto<Sprocket>> {
     const { limit, offset } = params;
@@ -33,7 +33,7 @@ export class SprocketRepository {
     };
   }
 
-  async getSprocketById(sprocketId: string): Promise<Sprocket | null> {
+  async findOne(sprocketId: string): Promise<Sprocket | null> {
     return this.prismaService.sprocket.findUnique({
       where: {
         id: sprocketId,
@@ -41,7 +41,7 @@ export class SprocketRepository {
     });
   }
 
-  async editSprocketById(
+  async update(
     sprocketId: string,
     updateData: UpdateSprocketDto,
   ): Promise<Sprocket | null> {

@@ -41,8 +41,8 @@ export class SprocketController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad Request Error',
   })
-  getAllSprockets(@Query() params: BasePaginationInput) {
-    return this.sprocketService.findAll(params);
+  findAllSprockets(@Query() params: BasePaginationInput) {
+    return this.sprocketService.getAllSprockets(params);
   }
 
   @Get(':id')
