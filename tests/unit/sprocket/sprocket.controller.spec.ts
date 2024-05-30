@@ -1,14 +1,15 @@
 import { Test } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
+
 import { PrismaService } from '@prismaClient/prisma.service';
 import { prismaMock } from '../../mocks/prismaSingleton.mock';
 
 import { PaginatedResponseDto } from '@common/dtos';
 import { mockSprocketsData } from '../../mocks/sprocketsData.mock';
 
-import { CreateSprocketDto, SprocketDto } from 'src/modules/sprocket/dto';
-import { SprocketController } from 'src/modules/sprocket/sprocket.controller';
-import { SprocketService } from 'src/modules/sprocket/sprocket.service';
-import { NotFoundException } from '@nestjs/common';
+import { CreateSprocketDto, SprocketDto } from '@sprocket/dto';
+import { SprocketController } from '@sprocket/sprocket.controller';
+import { SprocketService } from '@sprocket/sprocket.service';
 
 describe('sprocket.controller', () => {
   let controller: SprocketController;

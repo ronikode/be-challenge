@@ -4,9 +4,9 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { mockSprocketsData } from '../../mocks/sprocketsData.mock';
 
 import { BasePaginationInput, PaginatedResponseDto } from '@common/dtos';
-import { SprocketDto } from 'src/modules/sprocket/dto';
-import { SprocketService } from 'src/modules/sprocket/sprocket.service';
-import { SprocketRepository } from 'src/modules/sprocket/sprocket.repository';
+import { SprocketDto } from '@sprocket/dto';
+import { SprocketService } from '@sprocket/sprocket.service';
+import { SprocketRepository } from '@sprocket/sprocket.repository';
 
 describe('SprocketService', () => {
   let sprocketService: SprocketService;

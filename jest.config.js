@@ -58,7 +58,7 @@ module.exports = {
   moduleNameMapper: {
     '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@prismaClient/(.*)$': '<rootDir>/src/modules/prisma/$1',
-    '^@sprocket/(.*)$': '<rootDir>/src/sprocket/$1',
+    '^@sprocket/(.*)$': '<rootDir>/src/modules/sprocket/$1',
     '^@common/(.*)$': '<rootDir>/src/common/$1',
     '^@unitTests/(.*)$': '<rootDir>/tests/unit/$1',
   },
