@@ -16,6 +16,15 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "types": ["jest"],
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@config/*": ["src/config/*"],
+      "@seeds/*": ["src/prisma/seeds/*"],
+      "@prismaClient/*": ["src/modules/prisma/*"],
+      "@unitTests/*": ["tests/unit/*"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*.spec.ts"]
 }
