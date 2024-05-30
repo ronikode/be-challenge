@@ -1,18 +1,21 @@
 {
   "sprockets": [
     {
+      "id": "9399a1a9-8db7-4de3-8b28-2917ac9f7b6c",
       "teeth": 5,
       "pitch_diameter": 5,
       "outside_diameter": 6,
       "pitch": 1
     },
     {
+      "id": "f9d26318-dd0b-4e2e-8f6d-012d6096df8b",
       "teeth": 5,
       "pitch_diameter": 5,
       "outside_diameter": 6,
       "pitch": 1
     },
     {
+      "id": "89fb037e-312d-4024-90f8-769df4d75188",
       "teeth": 5,
       "pitch_diameter": 5,
       "outside_diameter": 6,

@@ -2,53 +2,33 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-# Ejecutar en desarrollo
+This repository was created to implement a RESTful api that services requests for sprocket factory data and sprockets.
 
-1. Clonar el repositorio
-2. Ejecutar
-3. Tener Nest CLI instalado
-4. Levantar la base de datos
+## Using this repository
+
+- [Description](#description)
+- [Using this repository](#using-this-repository)
+- [Requirements](#requirements)
+- [Running a development environment](#running-a-development-environment)
+  - [Steps](#steps)
+
+<!-- 1. Clonar el repositorio
+1. Ejecutar
+2. Tener Nest CLI instalado
+3. Levantar la base de datos
    ```
-       docker compose up -d
-   ```
+       docker compose up -d -->
 
-## Installation
+## Requirements
 
-```bash
-$ yarn install
-```
+Firstly you need to install all dependencies and running commands (I added `yarn`)
 
-## Running the app
+Reminder:
 
-```bash
-# development
-$ yarn run start
+## Running a development environment
 
-# watch mode
-$ yarn run start:dev
+### Steps
 
-# production mode
-$ yarn run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stack usado
-
-- PostgreSQL
-- NestJS
+1. Clone the repository
+2. Install requirements
+3. Setup personal environments variable

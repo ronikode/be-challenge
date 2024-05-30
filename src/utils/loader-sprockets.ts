@@ -1,12 +1,32 @@
 import * as fs from 'fs';
+import { camelCase, mapKeys } from 'lodash';
+
 import { Sprocket } from '@prisma/client';
 
-function readJsonFile(filePath: string): Sprocket[] {
+function convertToCamelCase(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map((v) => convertToCamelCase(v));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce(
+      (result, key) => ({
+        ...result,
+        [camelCase(key)]: convertToCamelCase(obj[key]),
+      }),
+      {},
+    );
+  }
+  return obj;
+}
+
+function readSprocketsJsonFile(filePath: string): Sprocket[] {
   const rawData = fs.readFileSync(filePath, 'utf-8');
-  const jsonData: Sprocket[] = JSON.parse(rawData);
-  return jsonData;
+  const convertData: Sprocket[] = convertToCamelCase(JSON.parse(rawData))
+    .sprockets as Sprocket[];
+  return convertData;
 }
 
 const FILE_SEED_SPROCKET_PATH =
   'src/modules/seed/data/seed_sprocket_types.json';
-export const sprocketsData = readJsonFile(FILE_SEED_SPROCKET_PATH);
+export const sprocketsData: Sprocket[] = readSprocketsJsonFile(
+  FILE_SEED_SPROCKET_PATH,
+);
