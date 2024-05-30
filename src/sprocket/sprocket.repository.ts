@@ -27,9 +27,6 @@ export class SprocketRepository {
       skip: offset,
     });
     const totalCount = await this.prismaService.sprocket.count();
-    console.log('in the repository take a look');
-    console.log(sprocketsDB);
-    console.log('lateeeeeeeeerrrrrrr');
     return {
       paging: { limit, offset, total_count: totalCount },
       items: sprocketsDB,

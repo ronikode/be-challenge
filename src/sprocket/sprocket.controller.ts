@@ -16,11 +16,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { SprocketService } from './sprocket.service';
-import { BasePaginationInput } from '@common/dtos/basePaginationInput.dto';
-import { PaginatedResponseDto } from '@common/dtos/paginatedResponse.dto';
-
+import { BasePaginationInput, PaginatedResponseDto } from '@common/dtos';
 import { SprocketDto, CreateSprocketDto, UpdateSprocketDto } from './dto';
+
+import { SprocketService } from './sprocket.service';
 
 @Controller('sprockets')
 @ApiTags('sprockets')

@@ -3,7 +3,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BasePaginationInput, PaginatedResponseDto } from '@common/dtos';
 import { CreateSprocketDto, SprocketDto, UpdateSprocketDto } from './dto';
 
-import { Sprocket } from './entities/sprocket.interface';
 import { SprocketRepository } from './sprocket.repository';
 
 @Injectable()
@@ -43,7 +42,7 @@ export class SprocketService {
     );
   }
 
-  fillSprocketsWithSeedData(sprockets: Sprocket[]) {
+  fillSprocketsWithSeedData(sprockets: any[]) {
     console.log('fillSprocketsWithSeedData');
     console.log(sprockets);
   }

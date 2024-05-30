@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Sprocket } from '../sprocket/entities/sprocket.interface';
+import { Sprocket } from '@prisma/client';
 
 function readJsonFile(filePath: string): Sprocket[] {
   const rawData = fs.readFileSync(filePath, 'utf-8');
