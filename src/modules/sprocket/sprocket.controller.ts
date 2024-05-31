@@ -56,6 +56,12 @@ export class SprocketController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a sprocket' })
+  @ApiOkResponse({
+    status: HttpStatus.CREATED,
+    description: 'OK',
+    type: SprocketDto,
+  })
   createSprocket(@Body() createSprocketDto: CreateSprocketDto) {
     return this.sprocketService.createSprocket(createSprocketDto);
   }

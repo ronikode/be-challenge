@@ -1,9 +1,12 @@
+import { Logger } from '@nestjs/common';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { BasePaginationInput, PaginatedResponseDto } from '@common/dtos';
 import { CreateSprocketDto, SprocketDto, UpdateSprocketDto } from './dto';
 
 import { SprocketRepository } from './sprocket.repository';
+
+const logger = new Logger();
 
 @Injectable()
 export class SprocketService {
@@ -17,9 +20,20 @@ export class SprocketService {
   }
 
   async findOneById(id: string): Promise<SprocketDto> | undefined {
-    const sprocket = await this.sprocketRepository.findOne(id);
-    if (!sprocket) {
-      throw new NotFoundException(`Sprocket with id '${id}' not found`);
+    logger.log(`findOneById id: ${id}`);
+    let sprocket;
+    try {
+      sprocket = await this.sprocketRepository.findOne(id);
+      if (!sprocket) {
+        throw new NotFoundException(`Sprocket with id '${id}' not found`);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        logger.error(`Sprocket with id '${id}' not found`);
+        return undefined;
+      } else {
+        throw error;
+      }
     }
     return sprocket;
   }
@@ -34,7 +48,10 @@ export class SprocketService {
     id: string,
     updateSprocketDto: UpdateSprocketDto,
   ): Promise<SprocketDto> {
-    this.findOneById(id);
+    const sprocket = await this.findOneById(id);
+    if (!sprocket) {
+      throw new NotFoundException(`Cannot update the sprocket with id '${id}'`);
+    }
     return await this.sprocketRepository.update(id, updateSprocketDto);
   }
 
