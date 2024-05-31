@@ -26,9 +26,10 @@ Reminder:
 2. Install requirements
 3. Setup personal environments variable
 4. Create a file `.env` based on `env.template` should be in the root.
-5. 4. Create a file `docker-compose.yml` based on `docker-compose.example.yml` should be in the root.
-6. Startup databases `docker compose up -d`
-7. Generate the prisma client `npx prisma generate`
-8. Run the project `yarn start:dev`
+5. For DB create a file `docker-compose.yml` based on `docker-compose.example.yml` should be in the root.
+6. Startup databases `docker compose build up -d`
+7. Run the project `yarn start:dev`
+8. Seed the data `yarn prisma db seed`
+9. Check the swagger documentation in: `http://localhost:3010/api/v1/`
 
 **⚠️ Note:** The Docker build process takes time on the initial installation. So don't open the web browser until you see these messages in the terminal:
