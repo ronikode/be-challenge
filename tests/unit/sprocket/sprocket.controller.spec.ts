@@ -18,7 +18,6 @@ describe('sprocket.controller', () => {
     findOneById: async () => new SprocketDto(),
     createSprocket: async () => new SprocketDto(),
     updateSprocket: async () => new SprocketDto(),
-    fillSprocketsWithSeedData: async () => Promise.resolve(),
   };
   const fakeSprockets = mockSprocketsData(2);
 
@@ -130,17 +129,17 @@ describe('sprocket.controller', () => {
 
     it('should throw and exception', async () => {
       // GIVEN
-      const badSprocketId = '1';
+      const sprocket = fakeSprockets[0];
       const updateSprocketDto = {
         pitch: 5,
       };
-      const errorMessage = `Sprocket with id '${badSprocketId}' not found`;
+      const errorMessage = `Sprocket with id '${sprocket.id}' not found`;
       jest
         .spyOn(fakeSprocketService, 'updateSprocket')
         .mockRejectedValue(new NotFoundException(errorMessage));
       // WHEN
       try {
-        await controller.updateSprocket(badSprocketId, updateSprocketDto);
+        await controller.updateSprocket(sprocket.id, updateSprocketDto);
       } catch (error) {
         // THEN
         expect(error).toBeDefined();

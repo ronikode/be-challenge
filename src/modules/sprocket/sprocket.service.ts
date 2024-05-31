@@ -54,9 +54,4 @@ export class SprocketService {
     }
     return await this.sprocketRepository.update(id, updateSprocketDto);
   }
-
-  fillSprocketsWithSeedData(sprockets: any[]) {
-    console.log('fillSprocketsWithSeedData');
-    console.log(sprockets);
-  }
 }

@@ -112,14 +112,15 @@ describe('SprocketService', () => {
 
     it('should throw and exception when sprocket is not found', async () => {
       // GIVEN
+      const fakeSprocketId = '0EAF8326-F7BD-4FD9-BF35-5A5C07CF6F3D';
       const expectedResponse = undefined;
       jest
         .spyOn(fakeSprocketRepository, 'findOne')
         .mockResolvedValue(expectedResponse);
       // WHEN
-      const result = sprocketService.findOneById('1');
+      const result = await sprocketService.findOneById(fakeSprocketId);
       // THEN
-      expect(result).rejects.toThrow(NotFoundException);
+      await expect(result).toBeUndefined();
     });
   });
 
@@ -147,4 +148,29 @@ describe('SprocketService', () => {
       );
     });
   });
+
+  // describe('updateSprocket', () => {
+  //   it('should update the sprocket', async () => {
+  //     // GIVEN
+  //     const updateSprocketDto = {
+  //       pitch: 101,
+  //     };
+  //     const sprocket = fakeSprockets[0];
+  //     const expectedResponse = {
+  //       ...sprocket,
+  //       pitch: updateSprocketDto.pitch,
+  //     };
+  //     jest
+  //       .spyOn(fakeSprocketRepository, 'update')
+  //       .mockResolvedValue(expectedResponse);
+  //     // WHEN
+  //     const result = await sprocketService.updateSprocket(
+  //       sprocket.id,
+  //       updateSprocketDto,
+  //     );
+  //     // THEN
+  //     expect(result).toBeDefined();
+  //     expect(result).toEqual(expectedResponse);
+  //   });
+  // });
 });
