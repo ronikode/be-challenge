@@ -1,7 +1,7 @@
 FROM node:20.11.1-slim as base
 
 RUN apt-get update -y \    
-  && apt-get install openssl make cmake g++ -y \    
+  && apt-get install openssl make python3 cmake g++ -y \    
   && apt-get upgrade -y \    
   && rm -rf /var/lib/apt/lists/*
 
@@ -19,10 +19,10 @@ COPY . .
 RUN yarn prebuild && yarn build && yarn install --production
 
 # Install Prisma manually for running migrations
-# Prisma does not get included as part of package.json beacuse we use
-# locally generated client and have no imports of '@prisma/client'
-# RUN yarn add prisma
-# RUN yarn prisma:generate
+RUN yarn add prisma
+RUN yarn prisma:generate
+RUN yarn prisma db seed
+
 
 ENV PORT=3000
 EXPOSE ${PORT}

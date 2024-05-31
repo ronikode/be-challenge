@@ -12,13 +12,6 @@ This repository was created to implement a RESTful api that services requests fo
 - [Running a development environment](#running-a-development-environment)
   - [Steps](#steps)
 
-<!-- 1. Clonar el repositorio
-1. Ejecutar
-2. Tener Nest CLI instalado
-3. Levantar la base de datos
-   ```
-       docker compose up -d -->
-
 ## Requirements
 
 Firstly you need to install all dependencies and running commands (I added `yarn`)
@@ -32,3 +25,10 @@ Reminder:
 1. Clone the repository
 2. Install requirements
 3. Setup personal environments variable
+4. Create a file `.env` based on `env.template` should be in the root.
+5. 4. Create a file `docker-compose.yml` based on `docker-compose.example.yml` should be in the root.
+6. Startup databases `docker compose up -d`
+7. Generate the prisma client `npx prisma generate`
+8. Run the project `yarn start:dev`
+
+**⚠️ Note:** The Docker build process takes time on the initial installation. So don't open the web browser until you see these messages in the terminal:
